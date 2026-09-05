@@ -351,6 +351,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_deposit_password: { Args: { _password: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
