@@ -284,8 +284,11 @@ export const adminUpdateSettings = createServerFn({ method: "POST" })
       "human_support_enabled",
       "ai_faq_enabled",
     ];
-    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    for (const key of allowed) if (key in data) patch[key] = data[key];
+    const patch: Database["public"]["Tables"]["settings"]["Update"] = {
+      updated_at: new Date().toISOString(),
+    };
+    for (const key of allowed)
+      if (key in data) (patch as Record<string, unknown>)[key] = data[key];
     const db = await admin();
     const { error } = await db.from("settings").update(patch).eq("id", 1);
     if (error) throw new Error(error.message);
