@@ -1,9 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database, Enums } from "@/integrations/supabase/types";
 
-async function assertAdmin(supabase: {
-  rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>;
-}, userId: string) {
+type Client = SupabaseClient<Database>;
+
+async function assertAdmin(supabase: Client, userId: string) {
   const { data } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
   if (data !== true) throw new Error("Akses ditolak.");
 }
@@ -15,7 +17,12 @@ async function admin() {
 
 async function log(actorId: string, action: string, target?: string, detail?: string) {
   const db = await admin();
-  await db.from("audit_logs").insert({ actor_id: actorId, action, target, detail });
+  await db.from("audit_logs").insert({
+    actor_id: actorId,
+    action,
+    target: target ?? null,
+    detail: detail ?? null,
+  });
 }
 
 export const adminOverview = createServerFn({ method: "GET" })
@@ -59,7 +66,8 @@ export const adminListSubmissions = createServerFn({ method: "POST" })
       .select("*, profiles!inner(username)")
       .order("created_at", { ascending: false })
       .limit(300);
-    if (data.status && data.status !== "ALL") query = query.eq("status", data.status);
+    if (data.status && data.status !== "ALL")
+      query = query.eq("status", data.status as Enums<"submission_status">);
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
     return rows ?? [];
