@@ -39,22 +39,27 @@ export const getBootstrap = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<Bootstrap> => {
     const { supabase, userId } = context;
 
-    const [profileRes, roleRes, settingsRes, ledgerRes, subsRes] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-      supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
-      supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
-      supabase.from("balance_transactions").select("type, amount").eq("user_id", userId),
-      supabase.from("submissions").select("status, rate, created_at").eq("user_id", userId),
-    ]);
+    const [profileRes, roleRes, settingsRes, ledgerRes, subsRes, paidRes] =
+      await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
+        supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
+        supabase.from("balance_transactions").select("type, amount").eq("user_id", userId),
+        supabase.from("submissions").select("status, rate, created_at").eq("user_id", userId),
+        supabase
+          .from("withdrawals")
+          .select("amount")
+          .eq("user_id", userId)
+          .eq("status", "PAID"),
+      ]);
 
     const ledger = ledgerRes.data ?? [];
     const available = ledger.reduce((sum, t) => sum + t.amount, 0);
     const totalEarned = ledger
       .filter((t) => t.type === "CREDIT")
       .reduce((sum, t) => sum + t.amount, 0);
-    const totalWithdrawn = ledger
-      .filter((t) => t.type === "PAYOUT" || t.type === "RESERVE")
-      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const totalWithdrawn = (paidRes.data ?? []).reduce((sum, w) => sum + w.amount, 0);
+
 
     const subs = subsRes.data ?? [];
     const today = new Date();
