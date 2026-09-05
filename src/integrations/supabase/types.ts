@@ -14,16 +14,367 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          detail: string | null
+          id: string
+          target: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          detail?: string | null
+          id?: string
+          target?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          detail?: string | null
+          id?: string
+          target?: string | null
+        }
+        Relationships: []
+      }
+      balance_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          ref_id: string | null
+          type: Database["public"]["Enums"]["txn_type"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          ref_id?: string | null
+          type: Database["public"]["Enums"]["txn_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          ref_id?: string | null
+          type?: Database["public"]["Enums"]["txn_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      faqs: {
+        Row: {
+          answer: string
+          category: string
+          id: string
+          question: string
+          sort_order: number
+        }
+        Insert: {
+          answer: string
+          category?: string
+          id?: string
+          question: string
+          sort_order?: number
+        }
+        Update: {
+          answer?: string
+          category?: string
+          id?: string
+          question?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          payment_account: string | null
+          payment_method: string | null
+          suspended: boolean
+          updated_at: string
+          username: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          payment_account?: string | null
+          payment_method?: string | null
+          suspended?: boolean
+          updated_at?: string
+          username: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          payment_account?: string | null
+          payment_method?: string | null
+          suspended?: boolean
+          updated_at?: string
+          username?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          ai_faq_enabled: boolean
+          announcement: string
+          daily_quota: number
+          dashboard_name: string
+          deposit_password: string
+          human_support_enabled: boolean
+          id: number
+          max_bulk: number
+          min_withdrawal: number
+          rate_per_account: number
+          submission_open: boolean
+          updated_at: string
+          whatsapp_link: string
+        }
+        Insert: {
+          ai_faq_enabled?: boolean
+          announcement?: string
+          daily_quota?: number
+          dashboard_name?: string
+          deposit_password?: string
+          human_support_enabled?: boolean
+          id?: number
+          max_bulk?: number
+          min_withdrawal?: number
+          rate_per_account?: number
+          submission_open?: boolean
+          updated_at?: string
+          whatsapp_link?: string
+        }
+        Update: {
+          ai_faq_enabled?: boolean
+          announcement?: string
+          daily_quota?: number
+          dashboard_name?: string
+          deposit_password?: string
+          human_support_enabled?: boolean
+          id?: number
+          max_bulk?: number
+          min_withdrawal?: number
+          rate_per_account?: number
+          submission_open?: boolean
+          updated_at?: string
+          whatsapp_link?: string
+        }
+        Relationships: []
+      }
+      submissions: {
+        Row: {
+          account_ref: string
+          admin_note: string | null
+          batch_id: string | null
+          created_at: string
+          id: string
+          internal_token: string | null
+          rate: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["submission_status"]
+          user_id: string
+        }
+        Insert: {
+          account_ref: string
+          admin_note?: string | null
+          batch_id?: string | null
+          created_at?: string
+          id?: string
+          internal_token?: string | null
+          rate?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["submission_status"]
+          user_id: string
+        }
+        Update: {
+          account_ref?: string
+          admin_note?: string | null
+          batch_id?: string | null
+          created_at?: string
+          id?: string
+          internal_token?: string | null
+          rate?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["submission_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_admin: boolean
+          sender_id: string | null
+          ticket_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          sender_id?: string | null
+          ticket_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          sender_id?: string | null
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          account_name: string
+          account_number: string
+          admin_note: string | null
+          amount: number
+          created_at: string
+          id: string
+          idempotency_key: string | null
+          method: string
+          processed_at: string | null
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          user_id: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          idempotency_key?: string | null
+          method: string
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          user_id: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          idempotency_key?: string | null
+          method?: string
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      submission_status:
+        | "PENDING"
+        | "ACCEPTED"
+        | "REJECTED"
+        | "DUPLICATE"
+        | "INVALID"
+      ticket_status: "OPEN" | "ANSWERED" | "CLOSED"
+      txn_type: "CREDIT" | "RESERVE" | "REFUND" | "PAYOUT" | "ADJUSTMENT"
+      withdrawal_status:
+        | "PENDING"
+        | "APPROVED"
+        | "PROCESSING"
+        | "PAID"
+        | "REJECTED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +501,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      submission_status: [
+        "PENDING",
+        "ACCEPTED",
+        "REJECTED",
+        "DUPLICATE",
+        "INVALID",
+      ],
+      ticket_status: ["OPEN", "ANSWERED", "CLOSED"],
+      txn_type: ["CREDIT", "RESERVE", "REFUND", "PAYOUT", "ADJUSTMENT"],
+      withdrawal_status: [
+        "PENDING",
+        "APPROVED",
+        "PROCESSING",
+        "PAID",
+        "REJECTED",
+      ],
+    },
   },
 } as const
