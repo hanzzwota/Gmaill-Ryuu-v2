@@ -89,10 +89,9 @@ export const getBootstrap = createServerFn({ method: "GET" })
         available,
         pending: pendingSubs.reduce((sum, s) => sum + s.rate, 0),
         totalEarned,
-        totalWithdrawn: ledger
-          .filter((t) => t.type === "PAYOUT")
-          .reduce((sum, t) => sum + Math.abs(t.amount), 0) || totalWithdrawn * 0,
+        totalWithdrawn,
       },
+
       quota: { used, limit, remaining: Math.max(0, limit - used) },
       stats: {
         accepted: subs.filter((s) => s.status === "ACCEPTED").length,
