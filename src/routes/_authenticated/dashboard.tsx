@@ -31,7 +31,7 @@ function Stat({
   tone?: string;
 }) {
   return (
-    <NeoCard className={tone}>
+    <NeoCard className={tone ?? ""}>
       <p className="font-display text-[11px] font-bold uppercase tracking-widest opacity-70">
         {label}
       </p>
