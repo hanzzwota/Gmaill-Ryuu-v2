@@ -12,7 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
+import { Route as AuthenticatedRiwayatRouteImport } from './routes/_authenticated/riwayat'
+import { Route as AuthenticatedRulesRouteImport } from './routes/_authenticated/rules'
+import { Route as AuthenticatedSaldoRouteImport } from './routes/_authenticated/saldo'
+import { Route as AuthenticatedStorAkunRouteImport } from './routes/_authenticated/stor-akun'
+import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,36 +35,123 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRiwayatRoute = AuthenticatedRiwayatRouteImport.update({
+  id: '/riwayat',
+  path: '/riwayat',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRulesRoute = AuthenticatedRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSaldoRoute = AuthenticatedSaldoRouteImport.update({
+  id: '/saldo',
+  path: '/saldo',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStorAkunRoute = AuthenticatedStorAkunRouteImport.update({
+  id: '/stor-akun',
+  path: '/stor-akun',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/profil': typeof AuthenticatedProfilRoute
+  '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/rules': typeof AuthenticatedRulesRoute
+  '/saldo': typeof AuthenticatedSaldoRoute
+  '/stor-akun': typeof AuthenticatedStorAkunRoute
+  '/support': typeof AuthenticatedSupportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/profil': typeof AuthenticatedProfilRoute
+  '/riwayat': typeof AuthenticatedRiwayatRoute
+  '/rules': typeof AuthenticatedRulesRoute
+  '/saldo': typeof AuthenticatedSaldoRoute
+  '/stor-akun': typeof AuthenticatedStorAkunRoute
+  '/support': typeof AuthenticatedSupportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/profil': typeof AuthenticatedProfilRoute
+  '/_authenticated/riwayat': typeof AuthenticatedRiwayatRoute
+  '/_authenticated/rules': typeof AuthenticatedRulesRoute
+  '/_authenticated/saldo': typeof AuthenticatedSaldoRoute
+  '/_authenticated/stor-akun': typeof AuthenticatedStorAkunRoute
+  '/_authenticated/support': typeof AuthenticatedSupportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/dashboard'
+    | '/profil'
+    | '/riwayat'
+    | '/rules'
+    | '/saldo'
+    | '/stor-akun'
+    | '/support'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/dashboard'
+    | '/profil'
+    | '/riwayat'
+    | '/rules'
+    | '/saldo'
+    | '/stor-akun'
+    | '/support'
   id:
-    '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/dashboard'
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/profil'
+    | '/_authenticated/riwayat'
+    | '/_authenticated/rules'
+    | '/_authenticated/saldo'
+    | '/_authenticated/stor-akun'
+    | '/_authenticated/support'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -89,6 +183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -96,15 +197,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profil': {
+      id: '/_authenticated/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof AuthenticatedProfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/riwayat': {
+      id: '/_authenticated/riwayat'
+      path: '/riwayat'
+      fullPath: '/riwayat'
+      preLoaderRoute: typeof AuthenticatedRiwayatRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rules': {
+      id: '/_authenticated/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof AuthenticatedRulesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/saldo': {
+      id: '/_authenticated/saldo'
+      path: '/saldo'
+      fullPath: '/saldo'
+      preLoaderRoute: typeof AuthenticatedSaldoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/stor-akun': {
+      id: '/_authenticated/stor-akun'
+      path: '/stor-akun'
+      fullPath: '/stor-akun'
+      preLoaderRoute: typeof AuthenticatedStorAkunRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/support': {
+      id: '/_authenticated/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AuthenticatedSupportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
+  AuthenticatedRiwayatRoute: typeof AuthenticatedRiwayatRoute
+  AuthenticatedRulesRoute: typeof AuthenticatedRulesRoute
+  AuthenticatedSaldoRoute: typeof AuthenticatedSaldoRoute
+  AuthenticatedStorAkunRoute: typeof AuthenticatedStorAkunRoute
+  AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProfilRoute: AuthenticatedProfilRoute,
+  AuthenticatedRiwayatRoute: AuthenticatedRiwayatRoute,
+  AuthenticatedRulesRoute: AuthenticatedRulesRoute,
+  AuthenticatedSaldoRoute: AuthenticatedSaldoRoute,
+  AuthenticatedStorAkunRoute: AuthenticatedStorAkunRoute,
+  AuthenticatedSupportRoute: AuthenticatedSupportRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

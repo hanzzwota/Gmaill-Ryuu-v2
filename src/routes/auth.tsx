@@ -6,9 +6,11 @@ import { lovable } from "@/integrations/lovable/index";
 import { NeoButton, NeoCard, NeoInput, NeoLabel } from "@/components/neo";
 import { useAuth } from "@/hooks/useAuth";
 
+type AuthSearch = { mode?: "login" | "register" };
+
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    mode: search["mode"] === "register" ? ("register" as const) : ("login" as const),
+  validateSearch: (search: Record<string, unknown>): AuthSearch => ({
+    mode: search["mode"] === "register" ? "register" : "login",
   }),
   head: () => ({
     meta: [
