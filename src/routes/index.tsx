@@ -5,13 +5,13 @@ import { NeoCard, NeoBadge } from "@/components/neo";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "S3L RYU88 GMAIL — Platform Manajemen Akun" },
+      { title: "S3L RYU88 GMAIL — Setorkan Gmail Mu Sekarang Juga" },
       {
         name: "description",
         content:
-          "Setor akun terotorisasi, pantau kuota harian, kelola saldo dan penarikan, serta hubungi support dalam satu dashboard.",
+          "Setor akun Gmail, pantau kuota harian, kelola saldo dan penarikan, serta hubungi support dalam satu dashboard.",
       },
-      { property: "og:title", content: "S3L RYU88 GMAIL — Platform Manajemen Akun" },
+      { property: "og:title", content: "S3L RYU88 GMAIL — Setorkan Gmail Mu Sekarang Juga" },
       {
         property: "og:description",
         content:
@@ -36,12 +36,7 @@ const features = [
   {
     icon: Bot,
     title: "Carsloss Support AI",
-    text: "Tanya kapan saja soal rate, kuota, status, dan penarikan. Tiket manusia juga tersedia.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Tanpa Kredensial",
-    text: "Kami tidak pernah meminta password, OTP, kode pemulihan, atau cookie sesi apa pun.",
+    text: "Tanya kapan saja soal rate, kuota, status, dan penarikan.",
   },
 ];
 
