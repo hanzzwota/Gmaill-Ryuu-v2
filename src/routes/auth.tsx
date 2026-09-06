@@ -107,7 +107,7 @@ function AuthPage() {
                   <NeoInput
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="ryu88"
+                    placeholder="Username"
                     required
                   />
                 </div>
@@ -137,8 +137,8 @@ function AuthPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimal 6 karakter"
-                minLength={6}
+                placeholder="Minimal 8 karakter"
+                minLength={8}
                 required
               />
             </div>
@@ -167,7 +167,7 @@ function AuthPage() {
         </NeoCard>
 
         <p className="mt-4 text-center text-xs font-bold uppercase text-muted-foreground">
-          Kami tidak pernah meminta password / OTP akun pihak ketiga.
+          Setorkan Gmail Mu Sekarang Juga
         </p>
       </div>
     </div>
