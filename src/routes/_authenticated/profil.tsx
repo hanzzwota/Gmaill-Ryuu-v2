@@ -84,9 +84,8 @@ function Page() {
     setSavingPassword(true);
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
-      // @ts-expect-error current_password didukung backend, belum ada di tipe
       current_password: currentPassword,
-    });
+    } as { password: string });
     setSavingPassword(false);
     if (error) {
       toast.error(error.message);
