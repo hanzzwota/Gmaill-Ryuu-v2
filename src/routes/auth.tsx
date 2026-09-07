@@ -49,7 +49,7 @@ function AuthPage() {
     setBusy(true);
     try {
       if (isRegister) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -58,11 +58,24 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Pendaftaran berhasil. Silakan masuk.");
-        setIsRegister(false);
+        if (data.session) {
+          toast.success("Pendaftaran berhasil. Selamat datang!");
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success("Pendaftaran berhasil. Silakan masuk.");
+          setIsRegister(false);
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          if ("code" in error && error.code === "email_not_confirmed") {
+            throw new Error("Email belum dikonfirmasi. Cek kotak masuk email kamu.");
+          }
+          if ("code" in error && error.code === "invalid_credentials") {
+            throw new Error("Email atau password salah.");
+          }
+          throw error;
+        }
         toast.success("Selamat datang kembali!");
         navigate({ to: "/dashboard" });
       }
