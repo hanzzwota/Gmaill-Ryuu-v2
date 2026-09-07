@@ -73,17 +73,6 @@ function AuthPage() {
     }
   };
 
-  const google = async () => {
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/dashboard` },
-    });
-    if (error) {
-      toast.error("Gagal masuk dengan Google.");
-      setBusy(false);
-    }
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
