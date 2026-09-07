@@ -73,17 +73,6 @@ function AuthPage() {
     }
   };
 
-  const google = async () => {
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/dashboard` },
-    });
-    if (error) {
-      toast.error("Gagal masuk dengan Google.");
-      setBusy(false);
-    }
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
@@ -147,15 +136,6 @@ function AuthPage() {
             </NeoButton>
           </form>
 
-          <div className="my-4 flex items-center gap-3">
-            <div className="h-[3px] flex-1 bg-ink" />
-            <span className="font-display text-xs font-bold uppercase">atau</span>
-            <div className="h-[3px] flex-1 bg-ink" />
-          </div>
-
-          <NeoButton tone="neutral" size="lg" className="w-full" onClick={google} disabled={busy}>
-            Lanjut dengan Google
-          </NeoButton>
 
           <button
             type="button"
