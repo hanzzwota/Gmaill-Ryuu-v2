@@ -135,6 +135,7 @@ export type Database = {
         Row: {
           ai_faq_enabled: boolean
           announcement: string
+          announcement_title: string
           daily_quota: number
           dashboard_name: string
           deposit_password: string
@@ -143,13 +144,16 @@ export type Database = {
           max_bulk: number
           min_withdrawal: number
           rate_per_account: number
+          rules_today: string
           submission_open: boolean
+          tiktok_link: string
           updated_at: string
           whatsapp_link: string
         }
         Insert: {
           ai_faq_enabled?: boolean
           announcement?: string
+          announcement_title?: string
           daily_quota?: number
           dashboard_name?: string
           deposit_password?: string
@@ -158,13 +162,16 @@ export type Database = {
           max_bulk?: number
           min_withdrawal?: number
           rate_per_account?: number
+          rules_today?: string
           submission_open?: boolean
+          tiktok_link?: string
           updated_at?: string
           whatsapp_link?: string
         }
         Update: {
           ai_faq_enabled?: boolean
           announcement?: string
+          announcement_title?: string
           daily_quota?: number
           dashboard_name?: string
           deposit_password?: string
@@ -173,7 +180,9 @@ export type Database = {
           max_bulk?: number
           min_withdrawal?: number
           rate_per_account?: number
+          rules_today?: string
           submission_open?: boolean
+          tiktok_link?: string
           updated_at?: string
           whatsapp_link?: string
         }

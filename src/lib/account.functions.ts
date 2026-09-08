@@ -20,7 +20,10 @@ export type Bootstrap = {
     min_withdrawal: number;
     submission_open: boolean;
     whatsapp_link: string;
+    tiktok_link: string;
     announcement: string;
+    announcement_title: string;
+    rules_today: string;
     human_support_enabled: boolean;
     ai_faq_enabled: boolean;
   };
@@ -81,7 +84,10 @@ export const getBootstrap = createServerFn({ method: "GET" })
         min_withdrawal: settings?.min_withdrawal ?? 4000,
         submission_open: settings?.submission_open ?? false,
         whatsapp_link: settings?.whatsapp_link ?? "",
+        tiktok_link: settings?.tiktok_link ?? "",
         announcement: settings?.announcement ?? "",
+        announcement_title: settings?.announcement_title ?? "PENGUMUMAN RESMI",
+        rules_today: settings?.rules_today ?? "",
         human_support_enabled: settings?.human_support_enabled ?? true,
         ai_faq_enabled: settings?.ai_faq_enabled ?? true,
       },

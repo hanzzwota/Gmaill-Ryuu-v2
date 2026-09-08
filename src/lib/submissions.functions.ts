@@ -9,7 +9,8 @@ export type SubmitResult = {
   message: string;
 };
 
-const LINE_RE = /^([^\s|@]+@[^\s|@]+\.[^\s|@]+)\s*\|\s*([A-Za-z0-9_\-.]{3,64})$/;
+// Format setoran: satu email Gmail per baris (tanpa password / data lain).
+const LINE_RE = /^([a-z0-9](?:[a-z0-9._%+-]*[a-z0-9])?@[a-z0-9.-]+\.[a-z]{2,})$/i;
 
 export const submitAccounts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -43,7 +44,7 @@ export const submitAccounts = createServerFn({ method: "POST" })
       throw new Error(`Maksimal ${settings.max_bulk} baris per setoran.`);
 
     const invalid: string[] = [];
-    const parsed: { ref: string; token: string }[] = [];
+    const parsed: { ref: string }[] = [];
     const seen = new Set<string>();
 
     for (const line of lines) {
@@ -55,7 +56,7 @@ export const submitAccounts = createServerFn({ method: "POST" })
       const ref = match[1]!.toLowerCase();
       if (seen.has(ref)) continue;
       seen.add(ref);
-      parsed.push({ ref, token: match[2]! });
+      parsed.push({ ref });
     }
 
     // Daily quota (UTC day boundary)
@@ -103,7 +104,6 @@ export const submitAccounts = createServerFn({ method: "POST" })
             user_id: userId,
             batch_id: batchId,
             account_ref: f.ref,
-            internal_token: f.token,
             rate: settings.rate_per_account,
           })),
         )
