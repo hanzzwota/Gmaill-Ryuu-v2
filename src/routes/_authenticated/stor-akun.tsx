@@ -75,7 +75,7 @@ function StorAkunPage() {
                 rows={10}
                 value={raw}
                 onChange={(e) => setRaw(e.target.value)}
-                placeholder={"nama@gmail.com | kode_referensi\nnama2@gmail.com | kode_referensi2"}
+                placeholder={"kdpbgitaking4598@gmail.com\nhaiaikapermana4714@gmail.com\nikmoandrewraksa3596@gmail.com"}
                 required
               />
               <p className="mt-1 text-xs font-bold uppercase text-muted-foreground">
@@ -88,7 +88,7 @@ function StorAkunPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password dari admin"
+                placeholder="Password setoran hari ini"
                 required
               />
             </div>
@@ -111,9 +111,9 @@ function StorAkunPage() {
           <NeoCard>
             <h2 className="neo-heading text-base">Aturan Format</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm font-medium text-muted-foreground">
-              <li>Format: email | kode_referensi</li>
+              <li>Satu email Gmail per baris, tanpa tambahan apa pun</li>
               <li>Duplikat otomatis ditolak sistem</li>
-              <li>Jangan pernah kirim password / OTP akun</li>
+              <li>Password setoran wajib sesuai Rules hari ini</li>
               <li>Kuota harian berlaku per pengguna</li>
             </ul>
           </NeoCard>
