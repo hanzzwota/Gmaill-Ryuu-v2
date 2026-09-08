@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { NeoButton, NeoCard, NeoInput, NeoLabel } from "@/components/neo";
 import { useAuth } from "@/hooks/useAuth";
+import { resolveLoginEmail } from "@/lib/auth.functions";
 
 type AuthSearch = { mode?: "login" | "register" };
 
@@ -66,7 +67,17 @@ function AuthPage() {
           setIsRegister(false);
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const found = await resolveLoginEmail({ data: { identifier: email } });
+        if (!found.found) {
+          throw new Error("Akun tidak terdaftar. Periksa username / Gmail kamu.");
+        }
+        if (found.suspended) {
+          throw new Error("Akun kamu sedang dibekukan. Hubungi admin.");
+        }
+        const { error } = await supabase.auth.signInWithPassword({
+          email: found.email,
+          password,
+        });
         if (error) {
           if ("code" in error && error.code === "email_not_confirmed") {
             throw new Error("Email belum dikonfirmasi. Cek kotak masuk email kamu.");
