@@ -83,7 +83,7 @@ function AuthPage() {
             throw new Error("Email belum dikonfirmasi. Cek kotak masuk email kamu.");
           }
           if ("code" in error && error.code === "invalid_credentials") {
-            throw new Error("Email atau password salah.");
+            throw new Error("Password salah untuk akun ini.");
           }
           throw error;
         }
@@ -135,12 +135,13 @@ function AuthPage() {
               </>
             ) : null}
             <div>
-              <NeoLabel>Email</NeoLabel>
+              <NeoLabel>{isRegister ? "Email" : "Username / Gmail"}</NeoLabel>
               <NeoInput
-                type="email"
+                type={isRegister ? "email" : "text"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@email.com"
+                placeholder={isRegister ? "nama@gmail.com" : "Ryuu0508 atau nama@gmail.com"}
+                autoComplete="username"
                 required
               />
             </div>
