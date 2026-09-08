@@ -20,7 +20,10 @@ export type Bootstrap = {
     min_withdrawal: number;
     submission_open: boolean;
     whatsapp_link: string;
+    tiktok_link: string;
     announcement: string;
+    announcement_title: string;
+    rules_today: string;
     human_support_enabled: boolean;
     ai_faq_enabled: boolean;
   };
