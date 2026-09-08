@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, XCircle, Info } from "lucide-react";
+import { CheckCircle2, XCircle, Info, CalendarClock } from "lucide-react";
 import { NeoCard, NeoBadge, SectionTitle, formatRp } from "@/components/neo";
 import { useBootstrap } from "@/components/AppShell";
 
@@ -10,12 +10,12 @@ export const Route = createFileRoute("/_authenticated/rules")({
       {
         name: "description",
         content:
-          "Aturan setoran akun, kuota harian, syarat penarikan saldo, dan larangan di platform S3L RYU88 GMAIL.",
+          "Aturan setoran bulk Gmail hari ini, kuota harian, format setoran, dan syarat penarikan saldo.",
       },
       { property: "og:title", content: "Rules — S3L RYU88 GMAIL" },
       {
         property: "og:description",
-        content: "Baca syarat setoran, kuota harian, dan ketentuan penarikan saldo.",
+        content: "Baca aturan bulk Gmail hari ini, kuota harian, dan ketentuan penarikan saldo.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -24,11 +24,20 @@ export const Route = createFileRoute("/_authenticated/rules")({
   component: Page,
 });
 
+const SAMPLE = `kdpbgitaking4598@gmail.com
+haiaikapermana4714@gmail.com
+ikmoandrewraksa3596@gmail.com
+cukksatriasulaiman7473@gmail.com
+rskbkamalgarcia2221@gmail.com
+cpsaenengjusoh7206@gmail.com
+ixcjsukesi38@gmail.com
+yhjiintan18@gmail.com`;
+
 const ALLOWED = [
+  "Satu email Gmail per baris, tanpa tambahan tanda atau teks lain.",
   "Akun Gmail dibuat sendiri dan belum pernah disetorkan ke pihak mana pun.",
-  "Format setoran satu baris: email|password|email pemulihan.",
-  "Akun aktif, bisa login normal, dan tanpa verifikasi nomor telepon tambahan.",
-  "Password akun tidak diubah setelah setoran dikirim.",
+  "Password setoran wajib sesuai dengan rules yang berlaku hari ini.",
+  "Akun aktif dan bisa login normal saat dicek admin.",
   "Data penarikan (nama & nomor) sesuai dengan pemilik akun.",
 ];
 
@@ -36,7 +45,7 @@ const FORBIDDEN = [
   "Menyetor akun milik orang lain atau hasil pembelian ulang.",
   "Mengirim ulang akun yang sudah pernah masuk sistem (duplikat otomatis ditolak).",
   "Menggunakan banyak akun member untuk melewati kuota harian.",
-  "Mengubah atau menarik kembali akun setelah disetujui.",
+  "Mengubah akun setelah setoran disetujui.",
   "Memberi data palsu saat mengajukan penarikan saldo.",
 ];
 
@@ -56,13 +65,33 @@ function Item({ text, ok }: { text: string; ok: boolean }) {
 function Page() {
   const { data } = useBootstrap();
   const s = data?.settings;
+  const today = new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div className="space-y-5">
       <SectionTitle
         title="Rules"
-        subtitle="Baca aturan berikut sebelum menyetor akun agar setoran tidak ditolak."
+        subtitle="Aturan yang berlaku hari ini untuk setoran bulk Gmail."
       />
+
+      <NeoCard className="bg-warning text-warning-foreground">
+        <div className="flex items-start gap-2">
+          <CalendarClock className="mt-0.5 size-5 shrink-0" />
+          <div>
+            <p className="font-display text-xs font-bold uppercase tracking-widest">
+              Rules Hari Ini — {today}
+            </p>
+            <p className="mt-1 whitespace-pre-line text-sm font-bold">
+              {s?.rules_today || "Belum ada aturan khusus untuk hari ini."}
+            </p>
+          </div>
+        </div>
+      </NeoCard>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <NeoCard className="bg-primary text-primary-foreground">
@@ -90,6 +119,20 @@ function Page() {
           <p className="neo-heading mt-1 text-2xl">{formatRp(s?.min_withdrawal ?? 0)}</p>
         </NeoCard>
       </div>
+
+      <NeoCard>
+        <div className="flex items-center justify-between">
+          <h2 className="neo-heading text-lg">Format Bulk Gmail</h2>
+          <NeoBadge tone="info">Contoh</NeoBadge>
+        </div>
+        <p className="mt-2 text-sm font-medium text-muted-foreground">
+          Tulis satu alamat Gmail per baris seperti contoh di bawah, lalu isi kolom password
+          setoran sesuai rules hari ini.
+        </p>
+        <pre className="mt-3 overflow-x-auto rounded-md border-[3px] border-ink bg-secondary p-3 text-xs font-semibold leading-6">
+          {SAMPLE}
+        </pre>
+      </NeoCard>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <NeoCard>
@@ -120,7 +163,7 @@ function Page() {
       <NeoCard>
         <h2 className="neo-heading text-lg">Alur Setoran &amp; Pembayaran</h2>
         <ol className="mt-3 space-y-2 text-sm font-medium">
-          <li>1. Kirim akun di halaman Stor Akun beserta password setoran.</li>
+          <li>1. Kirim daftar Gmail di halaman Stor Akun beserta password setoran hari ini.</li>
           <li>2. Setoran masuk status Menunggu review dan dicek admin.</li>
           <li>
             3. Jika disetujui, saldo bertambah {formatRp(s?.rate_per_account ?? 0)} per akun.
@@ -132,7 +175,7 @@ function Page() {
         </ol>
       </NeoCard>
 
-      <NeoCard className="bg-warning text-warning-foreground">
+      <NeoCard className="bg-destructive text-destructive-foreground">
         <div className="flex items-start gap-2">
           <Info className="mt-0.5 size-4 shrink-0" />
           <p className="text-sm font-bold">
