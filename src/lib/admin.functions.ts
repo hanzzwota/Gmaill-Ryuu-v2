@@ -283,6 +283,9 @@ export const adminUpdateSettings = createServerFn({ method: "POST" })
       "announcement",
       "human_support_enabled",
       "ai_faq_enabled",
+      "rules_today",
+      "tiktok_link",
+      "announcement_title",
     ];
     const patch: Database["public"]["Tables"]["settings"]["Update"] = {
       updated_at: new Date().toISOString(),
