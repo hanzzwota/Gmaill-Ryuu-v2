@@ -1,11 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { AlertTriangle, BookLock, Send } from "lucide-react";
 import {
   NeoCard,
   NeoButton,
-  NeoInput,
   NeoTextarea,
   NeoLabel,
   NeoBadge,
@@ -19,9 +19,9 @@ export const Route = createFileRoute("/_authenticated/stor-akun")({
   head: () => ({
     meta: [
       { title: "Stor Akun — S3L RYU88 GMAIL" },
-      { name: "description", content: "Kirim setoran akun satuan atau massal untuk direview admin." },
+      { name: "description", content: "Kirim setoran Gmail massal untuk direview admin." },
       { property: "og:title", content: "Stor Akun — S3L RYU88 GMAIL" },
-      { property: "og:description", content: "Kirim setoran akun untuk direview admin." },
+      { property: "og:description", content: "Kirim setoran Gmail untuk direview admin." },
     ],
   }),
   component: StorAkunPage,
@@ -31,11 +31,10 @@ function StorAkunPage() {
   const { data: boot } = useBootstrap();
   const qc = useQueryClient();
   const [raw, setRaw] = useState("");
-  const [password, setPassword] = useState("");
   const [result, setResult] = useState<SubmitResult | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (vars: { raw: string; password: string }) => submitAccounts({ data: vars }),
+    mutationFn: (vars: { raw: string }) => submitAccounts({ data: vars }),
     onSuccess: (res) => {
       setResult(res);
       setRaw("");
@@ -49,8 +48,40 @@ function StorAkunPage() {
   const open = boot?.settings.submission_open ?? false;
 
   return (
-    <div className="space-y-5">
-      <SectionTitle title="Stor Akun" subtitle="Satu baris = satu akun. Format wajib benar." />
+    <div className="space-y-4">
+      {!open ? (
+        <div className="flex items-start gap-3 rounded-md border-[3px] border-ink bg-warning px-3 py-2 text-warning-foreground shadow-neo">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0" />
+          <div>
+            <p className="font-display text-sm font-bold uppercase">Setoran sedang ditutup</p>
+            <p className="text-xs font-semibold opacity-80">
+              {boot?.settings.announcement}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border-[3px] border-ink bg-accent px-3 py-2 text-accent-foreground shadow-neo">
+        <div className="flex items-start gap-3">
+          <BookLock className="mt-0.5 size-5 shrink-0" />
+          <div>
+            <p className="font-display text-sm font-bold uppercase">
+              Cek Rules dulu sebelum stor
+            </p>
+            <p className="text-xs font-semibold opacity-80">
+              Wajib dibaca agar Gmail tidak ditolak.
+            </p>
+          </div>
+        </div>
+        <Link to="/rules">
+          <NeoButton size="sm">Buka Rules</NeoButton>
+        </Link>
+      </div>
+
+      <SectionTitle
+        title="Setor Daftar Gmail"
+        subtitle="Tempel daftar, satu Gmail per baris. Duplikat otomatis dihapus."
+      />
 
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
         <NeoCard>
@@ -65,35 +96,31 @@ function StorAkunPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              mutation.mutate({ raw, password });
+              mutation.mutate({ raw });
             }}
             className="space-y-3"
           >
             <div>
-              <NeoLabel>Data Setoran</NeoLabel>
+              <NeoLabel>Daftar Gmail</NeoLabel>
               <NeoTextarea
-                rows={10}
+                rows={12}
                 value={raw}
                 onChange={(e) => setRaw(e.target.value)}
-                placeholder={"kdpbgitaking4598@gmail.com\nhaiaikapermana4714@gmail.com\nikmoandrewraksa3596@gmail.com"}
+                placeholder={"contoh1@gmail.com\ncontoh2@gmail.com"}
                 required
               />
               <p className="mt-1 text-xs font-bold uppercase text-muted-foreground">
                 {lines} baris terdeteksi
               </p>
             </div>
-            <div>
-              <NeoLabel>Password Setoran</NeoLabel>
-              <NeoInput
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password setoran hari ini"
-                required
-              />
-            </div>
-            <NeoButton type="submit" size="lg" disabled={!open || mutation.isPending}>
-              {mutation.isPending ? "Mengirim..." : "Kirim Setoran"}
+            <NeoButton
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={!open || mutation.isPending}
+            >
+              <Send className="size-4" />
+              {mutation.isPending ? "Mengirim..." : "Stor Sekarang"}
             </NeoButton>
           </form>
         </NeoCard>
@@ -109,11 +136,17 @@ function StorAkunPage() {
           </NeoCard>
 
           <NeoCard>
+            <h2 className="neo-heading text-base">Rules Hari Ini</h2>
+            <p className="mt-2 whitespace-pre-line text-sm font-medium text-muted-foreground">
+              {boot?.settings.rules_today}
+            </p>
+          </NeoCard>
+
+          <NeoCard>
             <h2 className="neo-heading text-base">Aturan Format</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm font-medium text-muted-foreground">
               <li>Satu email Gmail per baris, tanpa tambahan apa pun</li>
               <li>Duplikat otomatis ditolak sistem</li>
-              <li>Password setoran wajib sesuai Rules hari ini</li>
               <li>Kuota harian berlaku per pengguna</li>
             </ul>
           </NeoCard>

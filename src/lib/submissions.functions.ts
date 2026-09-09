@@ -14,25 +14,23 @@ const LINE_RE = /^([a-z0-9](?:[a-z0-9._%+-]*[a-z0-9])?@[a-z0-9.-]+\.[a-z]{2,})$/
 
 export const submitAccounts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { raw: string; password: string }) => data)
+  .inputValidator((data: { raw: string; password?: string }) => data)
   .handler(async ({ data, context }): Promise<SubmitResult> => {
     const { supabase, userId } = context;
 
-    const [profileRes, settingsRes, pwRes] = await Promise.all([
+    const [profileRes, settingsRes] = await Promise.all([
       supabase.from("profiles").select("suspended").eq("id", userId).maybeSingle(),
       supabase
         .from("settings")
         .select("rate_per_account, daily_quota, max_bulk, submission_open")
         .eq("id", 1)
         .maybeSingle(),
-      supabase.rpc("check_deposit_password", { _password: data.password.trim() }),
     ]);
 
     if (profileRes.data?.suspended) throw new Error("Akun Anda sedang ditangguhkan.");
     const settings = settingsRes.data;
     if (!settings) throw new Error("Pengaturan sistem tidak ditemukan.");
     if (!settings.submission_open) throw new Error("Setoran sedang DITUTUP oleh admin.");
-    if (pwRes.data !== true) throw new Error("Password setoran salah.");
 
     const lines = data.raw
       .split(/\r?\n/)
