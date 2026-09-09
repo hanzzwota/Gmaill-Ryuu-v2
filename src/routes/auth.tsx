@@ -40,9 +40,14 @@ function AuthPage() {
   const [username, setUsername] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/dashboard" });
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && session) navigate({ to: "/dashboard", replace: true });
   }, [loading, session, navigate]);
 
   const submit = async (e: React.FormEvent) => {
@@ -120,7 +125,7 @@ function AuthPage() {
                   <NeoInput
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
+                    placeholder=""
                     required
                   />
                 </div>
@@ -140,7 +145,7 @@ function AuthPage() {
                 type={isRegister ? "email" : "text"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={isRegister ? "nama@gmail.com" : "Ryuu0508 atau nama@gmail.com"}
+                placeholder=""
                 autoComplete="username"
                 required
               />
