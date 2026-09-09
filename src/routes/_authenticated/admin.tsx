@@ -34,9 +34,15 @@ export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Admin — S3L RYU88 GMAIL" },
-      { name: "description", content: "Panel administrasi setoran, penarikan, pengguna, dan pengaturan." },
+      {
+        name: "description",
+        content: "Panel administrasi setoran, penarikan, pengguna, dan pengaturan.",
+      },
       { property: "og:title", content: "Admin — S3L RYU88 GMAIL" },
-      { property: "og:description", content: "Kelola setoran, penarikan, pengguna, tiket, dan pengaturan." },
+      {
+        property: "og:description",
+        content: "Kelola setoran, penarikan, pengguna, tiket, dan pengaturan.",
+      },
     ],
   }),
   component: AdminPage,
@@ -175,7 +181,7 @@ function SubmissionsTab() {
         </div>
         <NeoButton
           size="sm"
-          variant="secondary"
+          tone="info"
           onClick={() => setSelected(selected.length === allIds.length ? [] : allIds)}
         >
           {selected.length === allIds.length && allIds.length > 0 ? "Batal Pilih" : "Pilih Semua"}
@@ -201,7 +207,7 @@ function SubmissionsTab() {
           </NeoButton>
           <NeoButton
             size="sm"
-            variant="danger"
+            tone="danger"
             disabled={selected.length === 0 || review.isPending}
             onClick={() => review.mutate({ ids: selected, approve: false, note })}
           >
@@ -234,7 +240,11 @@ function SubmissionsTab() {
               <NeoBadge tone="info">{username}</NeoBadge>
               <NeoBadge
                 tone={
-                  r.status === "ACCEPTED" ? "primary" : r.status === "PENDING" ? "warning" : "danger"
+                  r.status === "ACCEPTED"
+                    ? "primary"
+                    : r.status === "PENDING"
+                      ? "warning"
+                      : "danger"
                 }
               >
                 {r.status}
@@ -290,11 +300,7 @@ function WithdrawalsTab() {
               </div>
               <NeoBadge
                 tone={
-                  w.status === "PAID"
-                    ? "primary"
-                    : w.status === "REJECTED"
-                      ? "danger"
-                      : "warning"
+                  w.status === "PAID" ? "primary" : w.status === "REJECTED" ? "danger" : "warning"
                 }
               >
                 {w.status}
@@ -303,7 +309,7 @@ function WithdrawalsTab() {
             <div className="mt-3 flex flex-wrap gap-2">
               <NeoButton
                 size="sm"
-                variant="secondary"
+                tone="info"
                 disabled={act.isPending}
                 onClick={() => act.mutate({ id: w.id, action: "APPROVE" })}
               >
@@ -318,7 +324,7 @@ function WithdrawalsTab() {
               </NeoButton>
               <NeoButton
                 size="sm"
-                variant="danger"
+                tone="danger"
                 disabled={act.isPending}
                 onClick={() => {
                   const note = window.prompt("Alasan penolakan?") ?? "";
@@ -357,7 +363,11 @@ function UsersTab() {
 
   return (
     <div className="space-y-3">
-      <NeoInput value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari username / email" />
+      <NeoInput
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Cari username / email"
+      />
       {rows.length === 0 ? <EmptyState text="Tidak ada pengguna." /> : null}
       {rows.map((u) => (
         <NeoCard key={u.id}>
@@ -382,7 +392,7 @@ function UsersTab() {
           <div className="mt-3 flex flex-wrap gap-2">
             <NeoButton
               size="sm"
-              variant={u.suspended ? "secondary" : "danger"}
+              tone={u.suspended ? "info" : "danger"}
               disabled={update.isPending}
               onClick={() => update.mutate({ id: u.id, suspended: !u.suspended })}
             >
@@ -390,7 +400,7 @@ function UsersTab() {
             </NeoButton>
             <NeoButton
               size="sm"
-              variant="secondary"
+              tone="info"
               disabled={update.isPending}
               onClick={() => {
                 const raw = window.prompt("Penyesuaian saldo (boleh minus), contoh 5000:");
@@ -465,7 +475,10 @@ function SettingsTab() {
       >
         <div>
           <NeoLabel>Nama Dashboard</NeoLabel>
-          <NeoInput value={text("dashboard_name")} onChange={(e) => set("dashboard_name", e.target.value)} />
+          <NeoInput
+            value={text("dashboard_name")}
+            onChange={(e) => set("dashboard_name", e.target.value)}
+          />
         </div>
         <div>
           <NeoLabel>Rate per Akun (Rp)</NeoLabel>
@@ -476,17 +489,19 @@ function SettingsTab() {
           />
         </div>
         <div>
-          <NeoLabel>Kuota Harian</NeoLabel>
+          <NeoLabel>Kuota Setor Hari Ini (0 = tanpa batas)</NeoLabel>
           <NeoInput
             type="number"
+            min={0}
             value={num("daily_quota")}
             onChange={(e) => set("daily_quota", Number(e.target.value))}
           />
         </div>
         <div>
-          <NeoLabel>Maks Baris per Setoran</NeoLabel>
+          <NeoLabel>Maks Baris per Setoran (0 = tanpa batas)</NeoLabel>
           <NeoInput
             type="number"
+            min={0}
             value={num("max_bulk")}
             onChange={(e) => set("max_bulk", Number(e.target.value))}
           />
@@ -508,11 +523,17 @@ function SettingsTab() {
         </div>
         <div>
           <NeoLabel>Link Channel WhatsApp</NeoLabel>
-          <NeoInput value={text("whatsapp_link")} onChange={(e) => set("whatsapp_link", e.target.value)} />
+          <NeoInput
+            value={text("whatsapp_link")}
+            onChange={(e) => set("whatsapp_link", e.target.value)}
+          />
         </div>
         <div>
           <NeoLabel>Link TikTok Resmi</NeoLabel>
-          <NeoInput value={text("tiktok_link")} onChange={(e) => set("tiktok_link", e.target.value)} />
+          <NeoInput
+            value={text("tiktok_link")}
+            onChange={(e) => set("tiktok_link", e.target.value)}
+          />
         </div>
         <div>
           <NeoLabel>Judul Pengumuman</NeoLabel>
@@ -618,7 +639,7 @@ function TicketsTab() {
             <div className="flex items-center gap-2">
               <NeoBadge tone={t.status === "OPEN" ? "warning" : "primary"}>{t.status}</NeoBadge>
               {t.status !== "CLOSED" ? (
-                <NeoButton size="sm" variant="danger" onClick={() => close.mutate(t.id)}>
+                <NeoButton size="sm" tone="danger" onClick={() => close.mutate(t.id)}>
                   Tutup
                 </NeoButton>
               ) : null}

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Upload, Wallet, CheckCircle2, Clock } from "lucide-react";
+import { Upload, Wallet, CheckCircle2, Clock, Download } from "lucide-react";
 import { NeoCard, NeoBadge, SectionTitle, formatRp } from "@/components/neo";
 import { useBootstrap } from "@/components/AppShell";
 
@@ -21,15 +21,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone?: string;
-}) {
+function Stat({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
     <NeoCard className={tone ?? ""}>
       <p className="font-display text-[11px] font-bold uppercase tracking-widest opacity-70">
@@ -49,6 +41,34 @@ function DashboardPage() {
 
   const { balance, quota, stats, settings, profile } = data;
 
+  const downloadReport = () => {
+    if (!data.isAdmin) return;
+    const rows = [
+      ["Metrik", "Nilai"],
+      ["Tanggal laporan", new Date().toLocaleString("id-ID")],
+      ["Saldo tersedia", balance.available],
+      ["Estimasi pending", balance.pending],
+      ["Total diterima", balance.totalEarned],
+      ["Total ditarik", balance.totalWithdrawn],
+      ["Kuota digunakan hari ini", quota.used],
+      ["Batas setor hari ini", quota.limit > 0 ? quota.limit : "Tanpa batas"],
+      ["Sisa kuota hari ini", quota.limit > 0 ? quota.remaining : "Tanpa batas"],
+      ["Setoran disetujui", stats.accepted],
+      ["Setoran menunggu review", stats.pending],
+      ["Setoran ditolak", stats.rejected],
+      ["Total setoran", stats.total],
+    ];
+    const csv = rows
+      .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(","))
+      .join("\n");
+    const url = URL.createObjectURL(new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `laporan-dashboard-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-5">
       <SectionTitle
@@ -56,8 +76,22 @@ function DashboardPage() {
         subtitle="Ringkasan aktivitas akun Anda hari ini."
       />
 
+      {data.isAdmin ? (
+        <button
+          type="button"
+          onClick={downloadReport}
+          className="neo-press inline-flex items-center gap-2 rounded-md border-[3px] border-ink bg-secondary px-4 py-2.5 font-display text-sm font-bold uppercase shadow-neo"
+        >
+          <Download className="size-4" /> Download Report CSV
+        </button>
+      ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Saldo Tersedia" value={formatRp(balance.available)} tone="bg-primary text-primary-foreground" />
+        <Stat
+          label="Saldo Tersedia"
+          value={formatRp(balance.available)}
+          tone="bg-primary text-primary-foreground"
+        />
         <Stat label="Estimasi Pending" value={formatRp(balance.pending)} />
         <Stat label="Total Diterima" value={formatRp(balance.totalEarned)} />
         <Stat label="Total Ditarik" value={formatRp(balance.totalWithdrawn)} />
@@ -72,7 +106,7 @@ function DashboardPage() {
             </NeoBadge>
           </div>
           <p className="mt-3 font-display text-3xl font-bold">
-            {quota.used} / {quota.limit}
+            {quota.used} / {quota.limit > 0 ? quota.limit : "∞"}
           </p>
           <div className="mt-2 h-4 w-full overflow-hidden rounded border-[3px] border-ink bg-card">
             <div
@@ -83,7 +117,8 @@ function DashboardPage() {
             />
           </div>
           <p className="mt-2 text-sm font-medium text-muted-foreground">
-            Sisa kuota hari ini: {quota.remaining} akun • Rate {formatRp(settings.rate_per_account)}
+            Sisa kuota hari ini: {quota.limit > 0 ? `${quota.remaining} akun` : "Tanpa batas"} •
+            Rate {formatRp(settings.rate_per_account)}
             /akun
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -126,10 +161,7 @@ function DashboardPage() {
               <span>{stats.total}</span>
             </div>
           </div>
-          <Link
-            to="/riwayat"
-            className="mt-4 inline-block text-sm font-bold underline"
-          >
+          <Link to="/riwayat" className="mt-4 inline-block text-sm font-bold underline">
             Lihat riwayat lengkap
           </Link>
         </NeoCard>

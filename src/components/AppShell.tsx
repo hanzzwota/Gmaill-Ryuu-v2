@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Upload,
@@ -33,13 +34,7 @@ const navItems = [
   { to: "/profil", label: "Profil", icon: UserRound },
 ] as const;
 
-const mobileItems = [
-  navItems[0],
-  navItems[1],
-  navItems[2],
-  navItems[3],
-  navItems[4],
-] as const;
+const mobileItems = [navItems[0], navItems[1], navItems[2], navItems[3], navItems[4]] as const;
 
 export function useBootstrap() {
   return useQuery(bootstrapQuery);
@@ -48,6 +43,7 @@ export function useBootstrap() {
 export function AppShell({ children }: { children: ReactNode }) {
   const { data } = useBootstrap();
   const navigate = useNavigate();
+  const [announcementOpen, setAnnouncementOpen] = useState(true);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -129,6 +125,41 @@ export function AppShell({ children }: { children: ReactNode }) {
               <p className="text-xs font-bold uppercase leading-snug">
                 {data.settings.announcement}
               </p>
+            </div>
+          ) : null}
+
+          {data?.settings.announcement && announcementOpen ? (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 px-4">
+              <div className="w-full max-w-lg rounded-lg border-[3px] border-ink bg-card p-5 text-card-foreground shadow-neo-lg">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2">
+                    <Megaphone className="mt-1 size-5 shrink-0" />
+                    <div>
+                      <p className="neo-heading text-lg">
+                        {data.settings.announcement_title || "Pengumuman Resmi"}
+                      </p>
+                      <p className="mt-3 whitespace-pre-line text-sm font-semibold">
+                        {data.settings.announcement}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="Tutup pengumuman"
+                    onClick={() => setAnnouncementOpen(false)}
+                    className="neo-press rounded-md border-[3px] border-ink bg-destructive px-2 py-1 font-display text-xs font-bold text-destructive-foreground shadow-neo-sm"
+                  >
+                    X
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAnnouncementOpen(false)}
+                  className="neo-press mt-5 w-full rounded-md border-[3px] border-ink bg-primary px-4 py-2.5 font-display text-sm font-bold uppercase shadow-neo"
+                >
+                  Mengerti
+                </button>
+              </div>
             </div>
           ) : null}
 

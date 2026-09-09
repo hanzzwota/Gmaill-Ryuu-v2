@@ -24,17 +24,7 @@ export const Route = createFileRoute("/_authenticated/rules")({
   component: Page,
 });
 
-const SAMPLE = `kdpbgitaking4598@gmail.com
-haiaikapermana4714@gmail.com
-ikmoandrewraksa3596@gmail.com
-cukksatriasulaiman7473@gmail.com
-rskbkamalgarcia2221@gmail.com
-cpsaenengjusoh7206@gmail.com
-ixcjsukesi38@gmail.com
-yhjiintan18@gmail.com`;
-
 const ALLOWED = [
-  "Satu email Gmail per baris, tanpa tambahan tanda atau teks lain.",
   "Akun Gmail dibuat sendiri dan belum pernah disetorkan ke pihak mana pun.",
   "Password setoran wajib sesuai dengan rules yang berlaku hari ini.",
   "Akun aktif dan bisa login normal saat dicek admin.",
@@ -120,20 +110,6 @@ function Page() {
         </NeoCard>
       </div>
 
-      <NeoCard>
-        <div className="flex items-center justify-between">
-          <h2 className="neo-heading text-lg">Format Bulk Gmail</h2>
-          <NeoBadge tone="info">Contoh</NeoBadge>
-        </div>
-        <p className="mt-2 text-sm font-medium text-muted-foreground">
-          Tulis satu alamat Gmail per baris seperti contoh di bawah, lalu isi kolom password
-          setoran sesuai rules hari ini.
-        </p>
-        <pre className="mt-3 overflow-x-auto rounded-md border-[3px] border-ink bg-secondary p-3 text-xs font-semibold leading-6">
-          {SAMPLE}
-        </pre>
-      </NeoCard>
-
       <div className="grid gap-4 lg:grid-cols-2">
         <NeoCard>
           <div className="flex items-center justify-between">
@@ -165,12 +141,8 @@ function Page() {
         <ol className="mt-3 space-y-2 text-sm font-medium">
           <li>1. Kirim daftar Gmail di halaman Stor Akun beserta password setoran hari ini.</li>
           <li>2. Setoran masuk status Menunggu review dan dicek admin.</li>
-          <li>
-            3. Jika disetujui, saldo bertambah {formatRp(s?.rate_per_account ?? 0)} per akun.
-          </li>
-          <li>
-            4. Ajukan penarikan minimal {formatRp(s?.min_withdrawal ?? 0)} di halaman Saldo.
-          </li>
+          <li>3. Jika disetujui, saldo bertambah {formatRp(s?.rate_per_account ?? 0)} per akun.</li>
+          <li>4. Ajukan penarikan minimal {formatRp(s?.min_withdrawal ?? 0)} di halaman Saldo.</li>
           <li>5. Penarikan diproses admin pada jam kerja, maksimal 1x24 jam.</li>
         </ol>
       </NeoCard>
@@ -179,8 +151,8 @@ function Page() {
         <div className="flex items-start gap-2">
           <Info className="mt-0.5 size-4 shrink-0" />
           <p className="text-sm font-bold">
-            Pelanggaran aturan dapat menyebabkan setoran ditolak tanpa pembayaran, saldo
-            dibekukan, atau akun member dinonaktifkan permanen.
+            Pelanggaran aturan dapat menyebabkan setoran ditolak tanpa pembayaran, saldo dibekukan,
+            atau akun member dinonaktifkan permanen.
           </p>
         </div>
       </NeoCard>

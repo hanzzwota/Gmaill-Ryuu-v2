@@ -42,19 +42,14 @@ export const getBootstrap = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<Bootstrap> => {
     const { supabase, userId } = context;
 
-    const [profileRes, roleRes, settingsRes, ledgerRes, subsRes, paidRes] =
-      await Promise.all([
-        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-        supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
-        supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
-        supabase.from("balance_transactions").select("type, amount").eq("user_id", userId),
-        supabase.from("submissions").select("status, rate, created_at").eq("user_id", userId),
-        supabase
-          .from("withdrawals")
-          .select("amount")
-          .eq("user_id", userId)
-          .eq("status", "PAID"),
-      ]);
+    const [profileRes, roleRes, settingsRes, ledgerRes, subsRes, paidRes] = await Promise.all([
+      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+      supabase.rpc("has_role", { _user_id: userId, _role: "admin" }),
+      supabase.from("settings").select("*").eq("id", 1).maybeSingle(),
+      supabase.from("balance_transactions").select("type, amount").eq("user_id", userId),
+      supabase.from("submissions").select("status, rate, created_at").eq("user_id", userId),
+      supabase.from("withdrawals").select("amount").eq("user_id", userId).eq("status", "PAID"),
+    ]);
 
     const ledger = ledgerRes.data ?? [];
     const available = ledger.reduce((sum, t) => sum + t.amount, 0);
@@ -62,7 +57,6 @@ export const getBootstrap = createServerFn({ method: "GET" })
       .filter((t) => t.type === "CREDIT")
       .reduce((sum, t) => sum + t.amount, 0);
     const totalWithdrawn = (paidRes.data ?? []).reduce((sum, w) => sum + w.amount, 0);
-
 
     const subs = subsRes.data ?? [];
     const today = new Date();
@@ -80,7 +74,7 @@ export const getBootstrap = createServerFn({ method: "GET" })
         dashboard_name: settings?.dashboard_name ?? "S3L RYU88 GMAIL",
         rate_per_account: settings?.rate_per_account ?? 0,
         daily_quota: limit,
-        max_bulk: settings?.max_bulk ?? 25,
+        max_bulk: settings?.max_bulk ?? 0,
         min_withdrawal: settings?.min_withdrawal ?? 4000,
         submission_open: settings?.submission_open ?? false,
         whatsapp_link: settings?.whatsapp_link ?? "",
@@ -98,7 +92,7 @@ export const getBootstrap = createServerFn({ method: "GET" })
         totalWithdrawn,
       },
 
-      quota: { used, limit, remaining: Math.max(0, limit - used) },
+      quota: { used, limit, remaining: limit > 0 ? Math.max(0, limit - used) : 0 },
       stats: {
         accepted: subs.filter((s) => s.status === "ACCEPTED").length,
         pending: pendingSubs.length,
@@ -110,12 +104,14 @@ export const getBootstrap = createServerFn({ method: "GET" })
 
 export const updateProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: {
-    username: string;
-    whatsapp: string;
-    payment_method: string;
-    payment_account: string;
-  }) => data)
+  .inputValidator(
+    (data: {
+      username: string;
+      whatsapp: string;
+      payment_method: string;
+      payment_account: string;
+    }) => data,
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     if (!data.username.trim()) throw new Error("Nama pengguna wajib diisi.");

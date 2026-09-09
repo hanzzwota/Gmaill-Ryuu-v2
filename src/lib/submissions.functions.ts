@@ -38,7 +38,7 @@ export const submitAccounts = createServerFn({ method: "POST" })
       .filter(Boolean);
 
     if (lines.length === 0) throw new Error("Tidak ada data setoran.");
-    if (lines.length > settings.max_bulk)
+    if (settings.max_bulk > 0 && lines.length > settings.max_bulk)
       throw new Error(`Maksimal ${settings.max_bulk} baris per setoran.`);
 
     const invalid: string[] = [];
@@ -67,9 +67,11 @@ export const submitAccounts = createServerFn({ method: "POST" })
       .gte("created_at", dayStart.toISOString());
 
     const used = count ?? 0;
-    const remaining = Math.max(0, settings.daily_quota - used);
-    if (remaining === 0 && parsed.length > 0)
-      throw new Error("Kuota harian Anda sudah habis.");
+    const remaining =
+      settings.daily_quota > 0
+        ? Math.max(0, settings.daily_quota - used)
+        : Number.POSITIVE_INFINITY;
+    if (remaining === 0 && parsed.length > 0) throw new Error("Kuota harian Anda sudah habis.");
 
     const allowed = parsed.slice(0, remaining);
     const skippedQuota = parsed.slice(remaining).map((p) => p.ref);

@@ -54,9 +54,7 @@ function StorAkunPage() {
           <AlertTriangle className="mt-0.5 size-5 shrink-0" />
           <div>
             <p className="font-display text-sm font-bold uppercase">Setoran sedang ditutup</p>
-            <p className="text-xs font-semibold opacity-80">
-              {boot?.settings.announcement}
-            </p>
+            <p className="text-xs font-semibold opacity-80">{boot?.settings.announcement}</p>
           </div>
         </div>
       ) : null}
@@ -65,9 +63,7 @@ function StorAkunPage() {
         <div className="flex items-start gap-3">
           <BookLock className="mt-0.5 size-5 shrink-0" />
           <div>
-            <p className="font-display text-sm font-bold uppercase">
-              Cek Rules dulu sebelum stor
-            </p>
+            <p className="font-display text-sm font-bold uppercase">Cek Rules dulu sebelum stor</p>
             <p className="text-xs font-semibold opacity-80">
               Wajib dibaca agar Gmail tidak ditolak.
             </p>
@@ -90,7 +86,11 @@ function StorAkunPage() {
               {open ? "Setoran Buka" : "Setoran Tutup"}
             </NeoBadge>
             <NeoBadge tone="info">Sisa kuota: {boot?.quota.remaining ?? 0}</NeoBadge>
-            <NeoBadge>Maks {boot?.settings.max_bulk ?? 25} baris</NeoBadge>
+            <NeoBadge>
+              {boot?.settings.max_bulk && boot.settings.max_bulk > 0
+                ? `Maks ${boot.settings.max_bulk} baris`
+                : "Tanpa batas baris"}
+            </NeoBadge>
           </div>
 
           <form
