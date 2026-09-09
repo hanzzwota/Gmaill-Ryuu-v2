@@ -27,12 +27,19 @@ const navItems = [
   { to: "/stor-akun", label: "Stor Akun", icon: Upload },
   { to: "/riwayat", label: "Riwayat", icon: History },
   { to: "/saldo", label: "Saldo", icon: Wallet },
+  { to: "/pengumuman", label: "Announcement", icon: Megaphone },
   { to: "/support", label: "Support AI", icon: Bot },
   { to: "/rules", label: "Rules", icon: BookLock },
   { to: "/profil", label: "Profil", icon: UserRound },
 ] as const;
 
-const mobileItems = navItems.slice(0, 5);
+const mobileItems = [
+  navItems[0],
+  navItems[1],
+  navItems[2],
+  navItems[3],
+  navItems[4],
+] as const;
 
 export function useBootstrap() {
   return useQuery(bootstrapQuery);
