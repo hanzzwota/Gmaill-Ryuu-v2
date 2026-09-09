@@ -161,8 +161,8 @@ function AuthPage() {
                 required
               />
             </div>
-            <NeoButton type="submit" size="lg" className="w-full" disabled={busy}>
-              {busy ? "Memproses..." : isRegister ? "Daftar Sekarang" : "Masuk"}
+            <NeoButton type="submit" size="lg" className="w-full" disabled={busy || !ready}>
+              {busy || !ready ? "Memproses..." : isRegister ? "Daftar Sekarang" : "Masuk"}
             </NeoButton>
           </form>
 
