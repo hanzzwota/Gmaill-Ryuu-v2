@@ -41,10 +41,16 @@ function AuthPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [notRegistered, setNotRegistered] = useState(false);
 
   useEffect(() => {
     setReady(true);
   }, []);
+
+  useEffect(() => {
+    setIsRegister(mode === "register");
+  }, [mode]);
 
   useEffect(() => {
     if (!loading && session) navigate({ to: "/dashboard", replace: true });
@@ -53,6 +59,8 @@ function AuthPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
+    setAuthError("");
+    setNotRegistered(false);
     try {
       if (isRegister) {
         const { data, error } = await supabase.auth.signUp({
@@ -63,7 +71,12 @@ function AuthPage() {
             data: { username: username || email.split("@")[0], whatsapp },
           },
         });
-        if (error) throw error;
+        if (error) {
+          if ("code" in error && error.code === "user_already_exists") {
+            throw new Error("Email sudah terdaftar. Silakan masuk.");
+          }
+          throw error;
+        }
         if (data.session) {
           toast.success("Pendaftaran berhasil. Selamat datang!");
           navigate({ to: "/dashboard" });
@@ -72,9 +85,15 @@ function AuthPage() {
           setIsRegister(false);
         }
       } else {
-        const found = await resolveLoginEmail({ data: { identifier: email } });
+        const identifier = email.trim();
+        const found = identifier.includes("@")
+          ? { found: true as const, email: identifier, suspended: false }
+          : await resolveLoginEmail({ data: { identifier } });
         if (!found.found) {
-          throw new Error("Akun tidak terdaftar. Periksa username / Gmail kamu.");
+          setNotRegistered(true);
+          throw new Error(
+            "Akun tidak terdaftar. Periksa username / Gmail kamu, atau daftar sekarang.",
+          );
         }
         if (found.suspended) {
           throw new Error("Akun kamu sedang dibekukan. Hubungi admin.");
@@ -90,18 +109,36 @@ function AuthPage() {
           if ("code" in error && error.code === "invalid_credentials") {
             throw new Error("Password salah untuk akun ini.");
           }
+          if ("code" in error && error.code === "invalid_login_credentials") {
+            throw new Error("Username/email atau password salah.");
+          }
           throw error;
         }
         toast.success("Selamat datang kembali!");
         navigate({ to: "/dashboard" });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Terjadi kesalahan.");
+      const message = err instanceof Error ? err.message : "Terjadi kesalahan. Silakan coba lagi.";
+      setAuthError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
   };
 
+  const openRegistration = () => {
+    const identifier = email.trim();
+    if (identifier.includes("@")) {
+      setEmail(identifier);
+      setUsername("");
+    } else {
+      setUsername(identifier);
+      setEmail("");
+    }
+    setAuthError("");
+    setNotRegistered(false);
+    navigate({ to: "/auth", search: { mode: "register" } });
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
@@ -144,7 +181,11 @@ function AuthPage() {
               <NeoInput
                 type={isRegister ? "email" : "text"}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setAuthError("");
+                  setNotRegistered(false);
+                }}
                 placeholder=""
                 autoComplete="username"
                 required
@@ -155,7 +196,10 @@ function AuthPage() {
               <NeoInput
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setAuthError("");
+                }}
                 placeholder="Minimal 8 karakter"
                 minLength={8}
                 required
@@ -166,10 +210,35 @@ function AuthPage() {
             </NeoButton>
           </form>
 
+          {authError ? (
+            <div
+              role="alert"
+              className="mt-4 rounded-md border-[3px] border-ink bg-destructive px-3 py-2 text-sm font-bold text-destructive-foreground shadow-neo-sm"
+            >
+              {authError}
+            </div>
+          ) : null}
+
+          {!isRegister && notRegistered ? (
+            <button
+              type="button"
+              onClick={openRegistration}
+              className="mt-3 w-full text-center text-sm font-bold underline"
+            >
+              Daftar Sekarang
+            </button>
+          ) : null}
 
           <button
             type="button"
-            onClick={() => setIsRegister((v) => !v)}
+            onClick={() => {
+              if (isRegister) {
+                setIsRegister(false);
+                navigate({ to: "/auth", search: { mode: "login" } });
+              } else {
+                openRegistration();
+              }
+            }}
             className="mt-4 w-full text-center text-sm font-bold underline"
           >
             {isRegister ? "Sudah punya akun? Masuk" : "Belum punya akun? Daftar"}
